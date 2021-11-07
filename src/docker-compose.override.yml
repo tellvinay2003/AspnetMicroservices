@@ -1,6 +1,7 @@
 version: '3.4'
 
 services:
+## Catalog DB configuration Start
   catalogdb:
     container_name: catalogdb
     restart: always
@@ -8,13 +9,45 @@ services:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
+  ## Catalog DB configuration End
 
+ 
+## Basket DB configuration Start
   basketdb:
     container_name: basketdb
     restart: always
     ports:
       - "6379:6379"
-    
+  ## Basket DB configuration End
+
+
+
+## dicount DB config Start: discount API configuration with pgAdmin for postgress
+  discountdb:
+    container_name: discountdb
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin1234
+      - POSRGRES_DB=DiscountDb
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/posrgresql/data/
+
+  pgadmin:
+    container_name: pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@aspnetrun.com
+      - PGADMIN_DEFAULT_PASSWORD=admin1234
+    restart: always
+    ports:
+      - "5050:80"
+    volumes:
+      - "pgadmin_data:/root/.pgadmin"
+  ## dicount DB config End
+
+## Portainer configuration Start for monitoring containers 
   portainer:
     container_name: portainer
     restart: always
@@ -24,7 +57,11 @@ services:
     volumes:
     - /var/run/docker.sock:/var/run/docker.sock  
     - portainer_data:/data
+  ## Portainer configuration End
+ 
 
+
+## Catalog API configuration Start
   catalog.api:
     container_name: catalog.api
     environment:
@@ -34,7 +71,9 @@ services:
       - catalogdb
     ports:
       - "8000:80"
+  ## Catalog API configuration End
 
+## Basket API configuration Start
   basket.api:
     container_name: basket.api
     environment:
@@ -44,4 +83,4 @@ services:
       - basketdb
     ports:
       - "8001:80"
-
+   ## Basket API configuration End
